@@ -1,0 +1,996 @@
+<!DOCTYPE html>
+<!--
+  ============================================================================
+  DATA PORTFOLIO — single-file, 
+  ============================================================================
+  HOW TO CUSTOMIZE (this is the ONLY part you usually need to touch):
+    1. Scroll to  <script id="config">  near the bottom of this file.
+    2. Edit the CONFIG object:
+         - profile      -> your name, roles, bio, contact links, resume file
+         - stats        -> the 3 numbers shown under the hero
+         - chartData    -> the little trend line in the hero card
+         - skills       -> add/remove categories or tags freely
+         - projects     -> add/remove project objects freely (this is the
+                           part you'll edit most — just copy one {...} block,
+                           paste it, and change the text)
+         - experience   -> work history timeline
+         - education    -> degrees / certifications
+    3. Put your resume PDF next to this file and name it "resume.pdf"
+       (or change profile.resumeUrl to point wherever it lives).
+    4. Save, open in a browser — done. No build step, no dependencies to
+       install. Everything below CONFIG re-renders itself automatically.
+  ============================================================================
+-->
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Deepak Shah — Data Science, AI/ML & Python Development</title>
+<meta name="description" content="Portfolio of Deepak Shah — Data Analyst, Data Scientist and Python Developer with a focus on AI/ML. Projects, skills and experience in data analysis, machine learning and Python engineering.">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+<style>
+/* ============================= DESIGN TOKENS ============================= */
+:root{
+  --bg:            #0B1220;
+  --bg-alt:        #0E1626;
+  --surface:       #121B2E;
+  --surface-2:     #17233B;
+  --border:        #223049;
+  --border-soft:   #1A2740;
+
+  --text:          #E7ECF3;
+  --text-muted:    #8B99B0;
+  --text-faint:    #5A6A85;
+
+  --accent:        #5EEAD4;   /* teal   — primary signal / links / highlights */
+  --accent-dim:    rgba(94,234,212,0.12);
+  --accent-2:      #F5B85A;   /* amber  — secondary / in/out labels / warnings */
+  --accent-2-dim:  rgba(245,184,90,0.12);
+  --ok:            #34D399;   /* status dot */
+
+  --font-display:  'Space Grotesk', 'Segoe UI', sans-serif;
+  --font-body:      'Inter', 'Segoe UI', sans-serif;
+  --font-mono:      'JetBrains Mono', 'Courier New', monospace;
+
+  --radius:  10px;
+  --radius-lg: 16px;
+  --maxw: 1120px;
+
+  --dur: 0.5s;
+  --ease: cubic-bezier(.16,1,.3,1);
+}
+
+@media (prefers-reduced-motion: reduce){
+  *{ animation-duration: 0.001ms !important; transition-duration: 0.001ms !important; scroll-behavior: auto !important; }
+}
+
+*,*::before,*::after{ box-sizing: border-box; }
+html{ scroll-behavior: smooth; }
+body{
+  margin:0;
+  background: var(--bg);
+  background-image:
+    radial-gradient(ellipse 60% 40% at 15% 0%, rgba(94,234,212,0.07), transparent 60%),
+    radial-gradient(ellipse 50% 35% at 100% 10%, rgba(245,184,90,0.05), transparent 60%);
+  color: var(--text);
+  font-family: var(--font-body);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+img{ max-width:100%; display:block; }
+a{ color: inherit; text-decoration: none; }
+h1,h2,h3,h4{ font-family: var(--font-display); margin:0; line-height:1.15; letter-spacing:-0.01em; }
+p{ margin:0; }
+ul{ margin:0; padding:0; list-style:none; }
+button{ font-family:inherit; cursor:pointer; }
+
+:focus-visible{ outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 4px; }
+
+.wrap{ max-width: var(--maxw); margin: 0 auto; padding: 0 24px; }
+.mono{ font-family: var(--font-mono); }
+.sr-only{ position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; }
+
+/* ================================ NAV ================================ */
+.nav{
+  position: sticky; top:0; z-index: 50;
+  background: rgba(11,18,32,0.82);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--border-soft);
+}
+.nav-inner{
+  display:flex; align-items:center; justify-content:space-between;
+  height: 64px;
+}
+.logo{
+  font-family: var(--font-mono); font-size: 15px; font-weight:600;
+  color: var(--text); display:flex; align-items:center; gap:8px;
+}
+.logo .dot{ color: var(--accent); }
+.kernel{
+  display:flex; align-items:center; gap:6px;
+  font-family: var(--font-mono); font-size: 11px; color: var(--text-muted);
+  border:1px solid var(--border); padding:4px 10px; border-radius: 999px;
+  margin-left: 14px;
+}
+.kernel .led{
+  width:7px; height:7px; border-radius:50%; background: var(--ok);
+  box-shadow: 0 0 0 0 rgba(52,211,153,0.6);
+  animation: pulse 2s infinite;
+}
+@keyframes pulse{
+  0%{ box-shadow: 0 0 0 0 rgba(52,211,153,0.55); }
+  70%{ box-shadow: 0 0 0 6px rgba(52,211,153,0); }
+  100%{ box-shadow: 0 0 0 0 rgba(52,211,153,0); }
+}
+.nav-links{ display:flex; align-items:center; gap: 28px; }
+.nav-links a{
+  font-size: 14px; color: var(--text-muted); font-weight:500;
+  transition: color 0.2s;
+  position:relative;
+}
+.nav-links a:hover{ color: var(--text); }
+.nav-links a::after{
+  content:""; position:absolute; left:0; bottom:-6px; width:0; height:1px;
+  background: var(--accent); transition: width 0.25s var(--ease);
+}
+.nav-links a:hover::after{ width:100%; }
+.nav-right{ display:flex; align-items:center; gap:16px; }
+.btn{
+  display:inline-flex; align-items:center; gap:8px;
+  font-size: 13.5px; font-weight:600; font-family: var(--font-body);
+  padding: 9px 16px; border-radius: 8px; border:1px solid transparent;
+  transition: transform 0.2s var(--ease), background 0.2s, border-color 0.2s, color 0.2s;
+  white-space: nowrap;
+}
+.btn:active{ transform: translateY(1px) scale(0.99); }
+.btn-primary{ background: var(--accent); color:#04211C; }
+.btn-primary:hover{ background:#7cf0dc; }
+.btn-ghost{ background: transparent; border-color: var(--border); color: var(--text); }
+.btn-ghost:hover{ border-color: var(--accent); color: var(--accent); }
+.btn-sm{ padding:7px 12px; font-size:12.5px; }
+
+.hamburger{
+  display:none; width:36px; height:36px; border-radius:8px;
+  background: transparent; border:1px solid var(--border);
+  align-items:center; justify-content:center; flex-direction:column; gap:4px;
+}
+.hamburger span{ width:16px; height:1.5px; background: var(--text); display:block; }
+
+.mobile-menu{
+  display:none; flex-direction:column; gap:2px;
+  background: var(--surface); border-top:1px solid var(--border-soft);
+  padding: 8px 24px 18px;
+}
+.mobile-menu a{ padding:12px 4px; font-size:15px; color: var(--text-muted); border-bottom:1px solid var(--border-soft); }
+.mobile-menu.open{ display:flex; }
+
+@media (max-width: 860px){
+  .nav-links, .nav-right .btn-ghost, .kernel{ display:none; }
+  .hamburger{ display:flex; }
+}
+
+/* ================================ HERO ================================ */
+.hero{ padding: 76px 0 64px; position:relative; overflow:hidden; }
+.hero-grid{
+  display:grid; grid-template-columns: 1.15fr 0.85fr; gap: 56px; align-items:center;
+  position:relative; z-index:1;
+}
+/* --- ambient neural-network watermark: the AI/ML signature detail --- */
+.neural-bg{
+  position:absolute; inset:0; z-index:0; width:100%; height:100%;
+  opacity:0.55; pointer-events:none;
+}
+.n-edge{ fill:none; stroke: var(--accent); stroke-opacity:0.32; stroke-width:1.1; stroke-dasharray:5 7; animation: flow 3.4s linear infinite; }
+.n-edge.amber{ stroke: var(--accent-2); stroke-opacity:0.28; }
+@keyframes flow{ to{ stroke-dashoffset: -120; } }
+.n-node{ fill: var(--accent); opacity:0.65; }
+.n-node.amber{ fill: var(--accent-2); opacity:0.6; }
+@media (max-width: 900px){ .neural-bg{ opacity:0.3; } }
+.eyebrow{
+  font-family: var(--font-mono); font-size:13px; color: var(--accent-2);
+  letter-spacing: 0.04em; margin-bottom:18px; min-height: 18px;
+  display:flex; align-items:center; gap:8px;
+}
+.eyebrow .caret{ display:inline-block; width:8px; height:15px; background:var(--accent-2); animation: blink 1s step-end infinite; }
+@keyframes blink{ 50%{ opacity:0; } }
+
+.hero-title{ font-size: clamp(34px, 5vw, 56px); font-weight:700; }
+.hero-title .accent{ color: var(--accent); }
+.hero-bio{
+  margin-top:20px; color: var(--text-muted); font-size:16.5px; max-width: 560px;
+}
+.hero-actions{ display:flex; gap:14px; margin-top: 30px; flex-wrap:wrap; }
+
+.hero-stats{
+  display:flex; gap:28px; margin-top:40px; padding-top:26px; border-top:1px solid var(--border-soft);
+  flex-wrap:wrap;
+}
+.stat .num{ font-family: var(--font-display); font-size:24px; font-weight:700; color: var(--text); }
+.stat .num .accent{ color: var(--accent); }
+.stat .label{ font-size:12.5px; color: var(--text-faint); font-family: var(--font-mono); margin-top:2px; }
+
+/* --- signature element: notebook chart card --- */
+.chart-card{
+  background: var(--surface); border:1px solid var(--border); border-radius: var(--radius-lg);
+  overflow:hidden; box-shadow: 0 20px 60px -20px rgba(0,0,0,0.5);
+}
+.chart-head{
+  display:flex; align-items:center; justify-content:space-between;
+  padding: 12px 16px; border-bottom:1px solid var(--border-soft);
+  font-family: var(--font-mono); font-size:12px; color: var(--text-muted);
+}
+.chart-head .fn{ color: var(--accent); }
+.chart-body{ padding: 20px 16px 8px; }
+.chart-svg{ width:100%; height:auto; display:block; }
+.chart-path{
+  fill:none; stroke: var(--accent); stroke-width:2.2; stroke-linecap:round; stroke-linejoin:round;
+  stroke-dasharray: 600; stroke-dashoffset: 600;
+  transition: stroke-dashoffset 1.6s var(--ease);
+}
+.chart-card.in-view .chart-path{ stroke-dashoffset: 0; }
+.chart-area{ fill: url(#areaGrad); opacity:0; transition: opacity 1s ease 0.4s; }
+.chart-card.in-view .chart-area{ opacity:1; }
+.chart-dot{ fill: var(--bg); stroke: var(--accent); stroke-width:2; opacity:0; transition: opacity .3s ease; }
+.chart-card.in-view .chart-dot{ opacity:1; }
+.chart-grid line{ stroke: var(--border-soft); stroke-width:1; }
+.chart-foot{
+  display:flex; justify-content:space-between; padding: 4px 16px 16px;
+  font-family: var(--font-mono); font-size:11px; color: var(--text-faint);
+}
+.chart-out{ padding: 0 16px 16px; font-family: var(--font-mono); font-size:12px; color: var(--text-muted); }
+.chart-out .amber{ color: var(--accent-2); }
+
+@media (max-width: 900px){
+  .hero-grid{ grid-template-columns: 1fr; }
+  .hero{ padding: 44px 0 40px; }
+}
+
+/* ============================ NOTEBOOK CELLS ============================ */
+section.section{ padding: 54px 0; }
+.section-head{ margin-bottom: 30px; }
+.section-tag{ font-family: var(--font-mono); font-size:12.5px; color: var(--text-faint); }
+.section-title{ font-size: clamp(22px,3vw,30px); margin-top:6px; }
+
+.cell{
+  border:1px solid var(--border); border-radius: var(--radius-lg);
+  background: var(--bg-alt); margin-bottom: 18px; overflow:hidden;
+  opacity:0; transform: translateY(14px);
+  transition: opacity 0.6s var(--ease), transform 0.6s var(--ease);
+}
+.cell.in-view{ opacity:1; transform:none; }
+
+.cell-in{
+  display:flex; align-items:center; gap:10px;
+  padding: 12px 18px; border-bottom:1px solid var(--border-soft);
+  font-family: var(--font-mono); font-size:13px; color: var(--text-muted);
+  background: var(--surface);
+}
+.cell-in .label{ color: var(--accent-2); min-width: 58px; }
+.cell-in .call{ color: var(--text-muted); }
+.cell-in .call .fn{ color: var(--accent); }
+
+.cell-out{ display:flex; }
+.cell-out .rule{
+  width: 58px; flex-shrink:0; display:flex; justify-content:center; padding-top:18px;
+  font-family: var(--font-mono); font-size:12px; color: var(--accent-2); opacity:0.85;
+}
+.cell-out .content{ padding: 18px 20px 24px 0; flex:1; min-width:0; }
+
+/* ================================ SKILLS ================================ */
+.skills-grid{ display:grid; grid-template-columns: repeat(2,1fr); gap: 22px 32px; }
+.skill-group-title{ font-size:13px; font-family: var(--font-mono); color: var(--text-muted); margin-bottom:10px; }
+.skill-tags{ display:flex; flex-wrap:wrap; gap:8px; }
+.tag{
+  font-family: var(--font-mono); font-size:12.5px; color: var(--text);
+  background: var(--surface-2); border:1px solid var(--border); border-radius:6px;
+  padding: 5px 10px;
+}
+@media (max-width:640px){ .skills-grid{ grid-template-columns: 1fr; } }
+
+/* ================================ PROJECTS ================================ */
+.projects-grid{ display:grid; grid-template-columns: repeat(2,1fr); gap: 18px; }
+.project-card{
+  background: var(--surface); border:1px solid var(--border); border-radius: var(--radius);
+  padding: 20px; display:flex; flex-direction:column; gap:12px;
+  transition: border-color 0.25s, transform 0.25s var(--ease);
+}
+.project-card:hover{ border-color: var(--accent); transform: translateY(-3px); }
+.project-top{ display:flex; align-items:flex-start; justify-content:space-between; gap:12px; }
+.project-title{ font-size:17px; font-weight:600; font-family: var(--font-display); }
+.project-links{ display:flex; gap:10px; flex-shrink:0; }
+.icon-link{
+  width:30px; height:30px; border-radius:7px; border:1px solid var(--border);
+  display:flex; align-items:center; justify-content:center; color: var(--text-muted);
+  transition: color 0.2s, border-color 0.2s;
+}
+.icon-link:hover{ color: var(--accent); border-color: var(--accent); }
+.icon-link svg{ width:15px; height:15px; }
+.project-desc{ color: var(--text-muted); font-size:14.5px; flex:1; }
+.project-metric{
+  font-family: var(--font-mono); font-size:12.5px; color: var(--accent);
+  background: var(--accent-dim); border-radius:6px; padding:6px 10px; width:fit-content;
+}
+.project-tags{ display:flex; flex-wrap:wrap; gap:6px; margin-top:2px; }
+.project-tags .tag{ font-size:11.5px; padding:3px 8px; }
+@media (max-width:760px){ .projects-grid{ grid-template-columns: 1fr; } }
+
+/* ================================ EXPERIENCE ================================ */
+.timeline{ display:flex; flex-direction:column; gap:0; }
+.timeline-item{
+  display:grid; grid-template-columns: 150px 1fr; gap:20px;
+  padding: 18px 0; border-bottom:1px solid var(--border-soft);
+}
+.timeline-item:last-child{ border-bottom:none; }
+.timeline-duration{ font-family: var(--font-mono); font-size:12.5px; color: var(--text-faint); padding-top:3px; }
+.timeline-role{ font-size:16.5px; font-weight:600; font-family: var(--font-display); }
+.timeline-company{ color: var(--accent); font-size:14px; margin-top:2px; }
+.timeline-points{ margin-top:10px; display:flex; flex-direction:column; gap:6px; }
+.timeline-points li{ color: var(--text-muted); font-size:14px; padding-left:16px; position:relative; }
+.timeline-points li::before{ content:"—"; position:absolute; left:0; color: var(--text-faint); }
+@media (max-width:640px){ .timeline-item{ grid-template-columns: 1fr; gap:6px; } }
+
+/* ================================ EDUCATION ================================ */
+.edu-grid{ display:grid; grid-template-columns: repeat(2,1fr); gap:16px; }
+.edu-card{ background: var(--surface); border:1px solid var(--border); border-radius: var(--radius); padding:16px 18px; }
+.edu-degree{ font-weight:600; font-size:15px; }
+.edu-school{ color: var(--accent); font-size:13.5px; margin-top:2px; }
+.edu-meta{ color: var(--text-faint); font-size:12.5px; font-family: var(--font-mono); margin-top:6px; }
+@media (max-width:640px){ .edu-grid{ grid-template-columns: 1fr; } }
+
+/* ================================ CONTACT ================================ */
+.contact-grid{ display:grid; grid-template-columns: 1.2fr 0.8fr; gap: 30px; }
+.contact-lead{ font-size: 20px; font-family: var(--font-display); font-weight:600; max-width: 460px; }
+.contact-sub{ color: var(--text-muted); margin-top:10px; font-size:14.5px; max-width:440px; }
+.social-links{ display:flex; flex-direction:column; gap:10px; }
+.social-link{
+  display:flex; align-items:center; gap:10px; font-family: var(--font-mono); font-size:14px;
+  color: var(--text-muted); border:1px solid var(--border); border-radius:8px; padding:11px 14px;
+  transition: border-color 0.2s, color 0.2s;
+}
+.social-link:hover{ border-color: var(--accent); color: var(--accent); }
+.social-link svg{ width:16px; height:16px; flex-shrink:0; }
+@media (max-width:760px){ .contact-grid{ grid-template-columns: 1fr; } }
+
+/* ================================ FOOTER ================================ */
+.footer{
+  border-top:1px solid var(--border-soft); padding: 26px 0; margin-top:20px;
+  display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;
+}
+.footer p{ font-family: var(--font-mono); font-size:12.5px; color: var(--text-faint); }
+
+/* ================================ MISC ================================ */
+.visually-top-pad{ scroll-margin-top: 84px; }
+</style>
+</head>
+<body>
+
+<!-- =============================== NAV =============================== -->
+<nav class="nav">
+  <div class="wrap nav-inner">
+    <div style="display:flex;align-items:center;">
+      <span class="logo"><span class="dot">&gt;</span> portfolio<span class="dot">.</span>ipynb</span>
+      <span class="kernel"><span class="led"></span><span id="kernelText">Status: Open to work</span></span>
+    </div>
+    <div class="nav-links">
+      <a href="#about">About</a>
+      <a href="#skills">Skills</a>
+      <a href="#projects">Projects</a>
+      <a href="#experience">Experience</a>
+      <a href="#education">Education</a>
+      <a href="#contact">Contact</a>
+    </div>
+    <div class="nav-right">
+      <a class="btn btn-ghost" id="navResume" href="resume.pdf" target="_blank" rel="noopener">Resume</a>
+      <button class="hamburger" id="hamburgerBtn" aria-label="Toggle menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="#about">About</a>
+    <a href="#skills">Skills</a>
+    <a href="#projects">Projects</a>
+    <a href="#experience">Experience</a>
+    <a href="#education">Education</a>
+    <a href="#contact">Contact</a>
+    <a id="mobileResume" href="resume.pdf" target="_blank" rel="noopener">Download Resume</a>
+  </div>
+</nav>
+
+<!-- =============================== HERO =============================== -->
+<header class="hero">
+  <svg class="neural-bg" viewBox="0 0 1200 520" preserveAspectRatio="xMaxYMid slice" aria-hidden="true">
+    <!-- illustrative network diagram: input -> hidden -> hidden -> output -->
+    <g class="n-edge">
+      <path d="M780,120 C850,120 850,90 920,90"/>
+      <path d="M780,120 C850,120 850,160 920,160"/>
+      <path d="M780,190 C850,190 850,160 920,160"/>
+      <path d="M780,190 C850,190 850,230 920,230"/>
+      <path d="M780,260 C850,260 850,230 920,230"/>
+      <path d="M780,260 C850,260 850,300 920,300"/>
+      <path d="M780,330 C850,330 850,300 920,300"/>
+      <path d="M780,330 C850,330 850,370 920,370"/>
+      <path d="M780,400 C850,400 850,370 920,370"/>
+      <path d="M780,400 C850,400 850,430 920,430"/>
+    </g>
+    <g class="n-edge amber">
+      <path d="M920,90 C990,90 990,150 1050,150"/>
+      <path d="M920,160 C990,160 990,150 1050,150"/>
+      <path d="M920,160 C990,160 990,260 1050,260"/>
+      <path d="M920,230 C990,230 990,260 1050,260"/>
+      <path d="M920,300 C990,300 990,260 1050,260"/>
+      <path d="M920,300 C990,300 990,370 1050,370"/>
+      <path d="M920,370 C990,370 990,370 1050,370"/>
+      <path d="M920,430 C990,430 990,370 1050,370"/>
+    </g>
+    <g class="n-edge">
+      <path d="M1050,150 C1090,150 1090,220 1130,220"/>
+      <path d="M1050,260 C1090,260 1090,220 1130,220"/>
+      <path d="M1050,260 C1090,260 1090,320 1130,320"/>
+      <path d="M1050,370 C1090,370 1090,320 1130,320"/>
+    </g>
+    <g class="n-node">
+      <circle cx="780" cy="120" r="4"/><circle cx="780" cy="190" r="4"/>
+      <circle cx="780" cy="260" r="4"/><circle cx="780" cy="330" r="4"/><circle cx="780" cy="400" r="4"/>
+    </g>
+    <g class="n-node amber">
+      <circle cx="920" cy="90" r="4"/><circle cx="920" cy="160" r="4"/><circle cx="920" cy="230" r="4"/>
+      <circle cx="920" cy="300" r="4"/><circle cx="920" cy="370" r="4"/><circle cx="920" cy="430" r="4"/>
+    </g>
+    <g class="n-node">
+      <circle cx="1050" cy="150" r="4"/><circle cx="1050" cy="260" r="4"/><circle cx="1050" cy="370" r="4"/>
+    </g>
+    <g class="n-node amber">
+      <circle cx="1130" cy="220" r="5"/><circle cx="1130" cy="320" r="5"/>
+    </g>
+  </svg>
+  <div class="wrap hero-grid">
+    <div>
+      <div class="eyebrow"><span id="roleRotator">Data Analyst</span><span class="caret"></span></div>
+      <h1 class="hero-title" id="heroTitle">Hi, I'm <span class="accent">Your Name</span>.</h1>
+      <p class="hero-bio" id="heroBio">
+        Computer Science graduate exploring the space between data and intelligent
+        systems — from cleaning and modelling data to building with LLMs and
+        computer vision. I enjoy taking a real-world problem, testing it with data,
+        and shipping a working solution end to end.
+      </p>
+      <div class="hero-actions">
+        <a href="#projects" class="btn btn-primary">View Projects</a>
+        <a id="heroResume" href="resume.pdf" target="_blank" rel="noopener" class="btn btn-ghost">Download Resume ↓</a>
+      </div>
+      <div class="hero-stats" id="heroStats"></div>
+    </div>
+
+    <div class="chart-card" id="chartCard">
+      <div class="chart-head">
+        <span><span class="fn">In [1]:</span> journey.plot()</span>
+        <span id="chartMeta">projects & concepts, 6 months</span>
+      </div>
+      <div class="chart-body">
+        <svg class="chart-svg" viewBox="0 0 400 160" id="chartSvg" role="img" aria-label="Line chart trending upward, representing project delivery over the last 6 months">
+          <defs>
+            <linearGradient id="areaGrad" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#5EEAD4" stop-opacity="0.35"/>
+              <stop offset="100%" stop-color="#5EEAD4" stop-opacity="0"/>
+            </linearGradient>
+          </defs>
+          <g class="chart-grid" id="chartGrid"></g>
+          <path class="chart-area" id="chartAreaPath" d=""></path>
+          <path class="chart-path" id="chartLinePath" d=""></path>
+          <g id="chartDots"></g>
+        </svg>
+      </div>
+      <div class="chart-foot" id="chartFoot"></div>
+      <div class="chart-out mono">Out[1]: <span class="amber">focus=['Data', 'ML', 'LLMs']</span></div>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <!-- =============================== ABOUT =============================== -->
+  <section class="section visually-top-pad" id="about">
+    <div class="cell">
+      <div class="cell-in"><span class="label">In [2]:</span><span class="call">about<span class="fn">.render</span>()</span></div>
+      <div class="cell-out">
+        <div class="rule">Out[2]:</div>
+        <div class="content">
+          <p id="aboutText" style="color:var(--text-muted); font-size:15.5px; max-width:720px;">
+            I'm a data professional focused on the space between analysis and engineering —
+            comfortable writing a SQL query, training a model, and shipping the pipeline that
+            keeps it running. My background blends statistics, Python development and
+            product thinking, and I care about work that's explainable, reproducible and
+            actually used by the people it's built for.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =============================== SKILLS =============================== -->
+  <section class="section" id="skills">
+    <div class="cell">
+      <div class="cell-in"><span class="label">In [3]:</span><span class="call">skills<span class="fn">.load</span>(sorted=True)</span></div>
+      <div class="cell-out">
+        <div class="rule">Out[3]:</div>
+        <div class="content">
+          <div class="skills-grid" id="skillsGrid"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =============================== PROJECTS =============================== -->
+  <section class="section" id="projects">
+    <div class="cell">
+      <div class="cell-in"><span class="label">In [4]:</span><span class="call">projects<span class="fn">.filter</span>(status="shipped")</span></div>
+      <div class="cell-out">
+        <div class="rule">Out[4]:</div>
+        <div class="content">
+          <div class="projects-grid" id="projectsGrid"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =============================== EXPERIENCE =============================== -->
+  <section class="section" id="experience">
+    <div class="cell">
+      <div class="cell-in"><span class="label">In [5]:</span><span class="call">experience<span class="fn">.timeline</span>()</span></div>
+      <div class="cell-out">
+        <div class="rule">Out[5]:</div>
+        <div class="content">
+          <div class="timeline" id="timeline"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =============================== EDUCATION =============================== -->
+  <section class="section" id="education">
+    <div class="cell">
+      <div class="cell-in"><span class="label">In [6]:</span><span class="call">education<span class="fn">.list</span>()</span></div>
+      <div class="cell-out">
+        <div class="rule">Out[6]:</div>
+        <div class="content">
+          <div class="edu-grid" id="eduGrid"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =============================== CONTACT =============================== -->
+  <section class="section" id="contact">
+    <div class="cell">
+      <div class="cell-in"><span class="label">In [7]:</span><span class="call">contact<span class="fn">.send</span>(message)</span></div>
+      <div class="cell-out">
+        <div class="rule">Out[7]:</div>
+        <div class="content">
+          <div class="contact-grid">
+            <div>
+              <p class="contact-lead">Open to Data Analyst, Data Scientist, AI/ML and Python Developer roles — let's talk.</p>
+              <p class="contact-sub" id="contactSub">Based in your city, open to remote and hybrid. The fastest way to reach me is email — I usually reply within a day.</p>
+            </div>
+            <div class="social-links" id="socialLinks"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="footer wrap">
+  <p>© <span id="year"></span> <span id="footerName">Your Name</span>. Built without a framework — just HTML, CSS and JS.</p>
+  <p id="footerTagline">Data Analyst · Data Scientist · Python Developer</p>
+</footer>
+
+<!-- ============================================================================
+     CONFIG — everything below this line is the only thing you should edit.
+     ============================================================================ -->
+<script id="config">
+const CONFIG = {
+
+  profile: {
+    name: "Deepak Shah",
+    roles: ["Data Analyst", "Data Scientist", "AI/ML Enthusiast", "Python Developer"],
+    email: "deepakshah30043@gmail.com",
+    location: "Bhopal, Madhya Pradesh",
+    resumeUrl: "resume.pdf",              // put resume.pdf next to this file
+    socials: {
+      github:       "https://github.com/Deepak1324",
+      linkedin:     "https://linkedin.com/in/deepak-shah",
+      kaggle:       "",                                   // no Kaggle profile given — leave blank to hide
+      email:        "mailto:deepakshah30043@gmail.com",
+      phone:        "tel:+917400912356",
+      phoneDisplay: "+91-7400912356"
+    }
+  },
+
+  // shown under the hero — kept to facts on the resume rather than invented numbers
+  stats: [
+    { value: "5+", label: "projects built" },
+    { value: "6 mo", label: "backend internship" },
+    { value: "3", label: "certifications" }
+  ],
+
+  // the little trend line in the hero card — illustrative learning/output trend
+  chartData: [10, 16, 22, 26, 32, 40],
+  chartLabels: ["Mar", "Apr", "May", "Jun", "Jul", "Aug"],
+
+  // ---- SKILLS: add/remove categories, or items inside a category, freely ----
+  skills: [
+    {
+      category: "Programming & Analysis",
+      items: ["Python", "Pandas", "NumPy", "Scikit-learn", "SQL", "JavaScript"]
+    },
+    {
+      category: "AI / Machine Learning",
+      items: ["TensorFlow", "CNN", "Computer Vision", "LLMs", "LangChain", "LangGraph", "RAG", "ReAct", "Model Evaluation"]
+    },
+    {
+      category: "Data Visualization",
+      items: ["Power BI", "Tableau", "Matplotlib", "Seaborn"]
+    },
+    {
+      category: "Web & API",
+      items: ["Node.js", "Express.js", "MongoDB", "React.js", "REST APIs"]
+    },
+    {
+      category: "Tools & Platforms",
+      items: ["Jupyter Notebook", "PyCharm", "VS Code", "Git & GitHub", "MS Excel", "Hadoop (fundamentals)"]
+    }
+  ],
+
+  // ---- PROJECTS: this is the section you'll edit most ----
+  // to add a project: copy one {...} block below and change the fields.
+  // to remove one: delete its {...} block. Leave github/demo as "" to hide that link.
+  // TIP: add your actual per-project repo links below (currently blank) so the
+  // GitHub icon on each card goes straight to that project instead of your profile.
+  projects: [
+    {
+      title: "Customer Churn Prediction",
+      description: "Analyzed a customer dataset to identify key drivers of churn — usage patterns, demographics and service history — then cleaned, explored and engineered features for modelling.",
+      metric: "Logistic Regression & Random Forest classifiers, with churn trends and feature importance visualized for retention strategy",
+      tags: ["Python", "Scikit-learn", "Pandas", "Matplotlib", "Seaborn"],
+      github: "",
+      demo: ""
+    },
+    {
+      title: "Movie Recommendation System",
+      description: "Built a content-based recommendation engine analyzing genre, director, actors and plot keywords to suggest similar movies, using similarity-based modelling.",
+      metric: "Integrated TMDB and IMDb APIs for real-world movie metadata",
+      tags: ["Python", "Scikit-learn", "TensorFlow", "Pandas", "NumPy"],
+      github: "",
+      demo: ""
+    },
+    {
+      title: "D-Mart Web-App Clone",
+      description: "Designed and developed an e-commerce platform replicating core D-Mart shopping functionality, including email/phone-based auth and an admin dashboard for product and category management.",
+      metric: "",
+      tags: ["Node.js", "Express.js", "MongoDB"],
+      github: "",
+      demo: ""
+    },
+    {
+      title: "Netflix Clone Page",
+      description: "Designed a responsive Netflix-style UI, replicating the core layout, styling and browsing experience.",
+      metric: "",
+      tags: ["HTML", "CSS", "VS Code"],
+      github: "",
+      demo: ""
+    }
+  ],
+
+  // ---- EXPERIENCE ----
+  experience: [
+    {
+      role: "Backend Development Intern",
+      company: "Techdigi Software, Indrapuri, Bhopal",
+      duration: "Jul 2024 — Dec 2024 (6 months)",
+      points: [
+        "Worked on RESTful API development using Node.js, Express.js and MongoDB for real-world web applications",
+        "Collaborated with the development team on backend architecture design for efficient data handling and scalability",
+        "Assisted with database schema design and query optimization in MongoDB to improve performance",
+        "Participated in debugging, testing and deployment, gaining hands-on exposure to production-level backend systems"
+      ]
+    }
+  ],
+
+  // ---- EDUCATION / CERTIFICATIONS ----
+  education: [
+    {
+      degree: "B.Tech — Computer Science",
+      school: "Sagar Institute of Research Technology and Science, Bhopal",
+      duration: "2020 — 2024",
+      detail: "CGPA: 7.8"
+    },
+    {
+      degree: "12th Standard — PCM",
+      school: "Reema Vidhya Mandir School",
+      duration: "2019 — 2020",
+      detail: "78.8%"
+    },
+    {
+      degree: "Data Science Certification",
+      school: "Cybrom Technology Pvt. Ltd., Bhopal",
+      duration: "",
+      detail: "Python for data analysis, ML algorithms, data visualization & statistical modelling"
+    },
+    {
+      degree: "MERN Stack Certification",
+      school: "Saksham Digital Technology",
+      duration: "",
+      detail: "MongoDB, Express.js, React.js, Node.js — full-stack projects with API integration"
+    },
+    {
+      degree: "Hadoop Certification",
+      school: "Institute for Technical Education",
+      duration: "",
+      detail: "Hadoop ecosystem fundamentals, distributed storage & processing"
+    }
+  ]
+};
+</script>
+
+<!-- ============================================================================
+     RENDER ENGINE — you shouldn't need to touch anything below this line.
+     ============================================================================ -->
+<script>
+(function(){
+  "use strict";
+
+  const ICONS = {
+    github: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 .5C5.73.5.5 5.73.5 12c0 5.08 3.29 9.39 7.86 10.91.57.1.78-.25.78-.55 0-.27-.01-1.16-.02-2.11-3.2.7-3.88-1.36-3.88-1.36-.52-1.33-1.28-1.69-1.28-1.69-1.04-.71.08-.7.08-.7 1.15.08 1.76 1.18 1.76 1.18 1.03 1.75 2.69 1.25 3.34.96.1-.75.4-1.25.73-1.53-2.55-.29-5.24-1.28-5.24-5.68 0-1.26.45-2.28 1.18-3.09-.12-.29-.51-1.46.11-3.04 0 0 .96-.31 3.15 1.18a10.9 10.9 0 0 1 5.74 0c2.19-1.49 3.15-1.18 3.15-1.18.62 1.58.23 2.75.11 3.04.74.81 1.18 1.83 1.18 3.09 0 4.41-2.69 5.38-5.25 5.67.41.36.78 1.06.78 2.14 0 1.55-.01 2.79-.01 3.17 0 .3.2.66.79.55A10.52 10.52 0 0 0 23.5 12C23.5 5.73 18.27.5 12 .5Z"/></svg>',
+    linkedin: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.45 20.45h-3.55v-5.57c0-1.33-.02-3.03-1.85-3.03-1.85 0-2.14 1.45-2.14 2.94v5.66H9.36V9h3.41v1.56h.05c.48-.9 1.63-1.85 3.36-1.85 3.6 0 4.27 2.37 4.27 5.45v6.29ZM5.34 7.43a2.06 2.06 0 1 1 0-4.12 2.06 2.06 0 0 1 0 4.12ZM7.12 20.45H3.56V9h3.56v11.45Z"/></svg>',
+    kaggle: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.8 20.4h-3.6l-4.9-6.2-1.4 1.3v4.9H5.9V3.6h3v10.2l5.6-5.8h3.7l-6 6.1z"/></svg>',
+    mail: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg>',
+    phone: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6.6 10.8a15.1 15.1 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.25 11.4 11.4 0 0 0 3.6.58 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1 11.4 11.4 0 0 0 .58 3.6 1 1 0 0 1-.25 1z"/></svg>',
+    external: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M7 17 17 7M9 7h8v8"/></svg>'
+  };
+
+  function el(tag, className, html){
+    const e = document.createElement(tag);
+    if(className) e.className = className;
+    if(html !== undefined) e.innerHTML = html;
+    return e;
+  }
+
+  /* ---------------------------- hero / profile ---------------------------- */
+  function renderProfile(){
+    const p = CONFIG.profile;
+    document.title = p.name + " — " + p.roles.join(" · ");
+    document.getElementById("heroTitle").innerHTML = 'Hi, I\'m <span class="accent">' + p.name + '</span>.';
+    document.getElementById("footerName").textContent = p.name;
+    document.getElementById("footerTagline").textContent = p.roles.join(" · ");
+    document.getElementById("contactSub").textContent =
+      "Based in " + p.location + ". The fastest way to reach me is email — I usually reply within a day.";
+    [ "navResume", "mobileResume", "heroResume" ].forEach(function(id){
+      const node = document.getElementById(id);
+      if(node) node.href = p.resumeUrl;
+    });
+  }
+
+  function renderStats(){
+    const wrap = document.getElementById("heroStats");
+    CONFIG.stats.forEach(function(s){
+      const item = el("div", "stat");
+      item.innerHTML = '<div class="num">' + s.value + '</div><div class="label">' + s.label + '</div>';
+      wrap.appendChild(item);
+    });
+  }
+
+  /* ------------------------------ role rotator ----------------------------- */
+  function setupRoleRotator(){
+    const node = document.getElementById("roleRotator");
+    const roles = CONFIG.profile.roles;
+    if(roles.length < 2) return;
+    let i = 0;
+    setInterval(function(){
+      i = (i + 1) % roles.length;
+      node.style.transition = "opacity .25s ease";
+      node.style.opacity = 0;
+      setTimeout(function(){
+        node.textContent = roles[i];
+        node.style.opacity = 1;
+      }, 250);
+    }, 2400);
+  }
+
+  /* --------------------------------- chart --------------------------------- */
+  function renderChart(){
+    const data = CONFIG.chartData;
+    const labels = CONFIG.chartLabels;
+    const w = 400, h = 160, padX = 10, padY = 16;
+    const max = Math.max.apply(null, data);
+    const min = Math.min.apply(null, data);
+    const range = (max - min) || 1;
+    const stepX = (w - padX * 2) / (data.length - 1);
+
+    const points = data.map(function(v, i){
+      const x = padX + i * stepX;
+      const y = h - padY - ((v - min) / range) * (h - padY * 2);
+      return { x: x, y: y };
+    });
+
+    const linePath = points.map(function(pt, i){ return (i === 0 ? "M" : "L") + pt.x.toFixed(1) + "," + pt.y.toFixed(1); }).join(" ");
+    const areaPath = linePath + " L" + points[points.length-1].x.toFixed(1) + "," + (h-padY) + " L" + points[0].x.toFixed(1) + "," + (h-padY) + " Z";
+
+    document.getElementById("chartLinePath").setAttribute("d", linePath);
+    document.getElementById("chartAreaPath").setAttribute("d", areaPath);
+
+    const grid = document.getElementById("chartGrid");
+    for(let g=0; g<3; g++){
+      const y = padY + g * ((h - padY*2) / 2);
+      const line = document.createElementNS("http://www.w3.org/2000/svg","line");
+      line.setAttribute("x1", padX); line.setAttribute("x2", w - padX);
+      line.setAttribute("y1", y.toFixed(1)); line.setAttribute("y2", y.toFixed(1));
+      grid.appendChild(line);
+    }
+
+    const dots = document.getElementById("chartDots");
+    points.forEach(function(pt){
+      const c = document.createElementNS("http://www.w3.org/2000/svg","circle");
+      c.setAttribute("class","chart-dot");
+      c.setAttribute("cx", pt.x.toFixed(1)); c.setAttribute("cy", pt.y.toFixed(1)); c.setAttribute("r","3.5");
+      dots.appendChild(c);
+    });
+
+    const foot = document.getElementById("chartFoot");
+    labels.forEach(function(l){ foot.appendChild(el("span","",l)); });
+  }
+
+  /* -------------------------------- skills -------------------------------- */
+  function renderSkills(){
+    const wrap = document.getElementById("skillsGrid");
+    CONFIG.skills.forEach(function(group){
+      const g = el("div","skill-group");
+      const title = el("div","skill-group-title", group.category);
+      const tags = el("div","skill-tags");
+      group.items.forEach(function(item){ tags.appendChild(el("span","tag",item)); });
+      g.appendChild(title); g.appendChild(tags);
+      wrap.appendChild(g);
+    });
+  }
+
+  /* ------------------------------- projects -------------------------------- */
+  function renderProjects(){
+    const wrap = document.getElementById("projectsGrid");
+    CONFIG.projects.forEach(function(proj){
+      const card = el("div","project-card");
+
+      let links = "";
+      if(proj.github){ links += '<a class="icon-link" href="'+proj.github+'" target="_blank" rel="noopener" aria-label="'+proj.title+' GitHub repository">'+ICONS.github+'</a>'; }
+      if(proj.demo){ links += '<a class="icon-link" href="'+proj.demo+'" target="_blank" rel="noopener" aria-label="'+proj.title+' live demo">'+ICONS.external+'</a>'; }
+
+      const tagsHtml = proj.tags.map(function(t){ return '<span class="tag">'+t+'</span>'; }).join("");
+      const metricHtml = proj.metric ? '<div class="project-metric">'+proj.metric+'</div>' : "";
+
+      card.innerHTML =
+        '<div class="project-top">' +
+          '<div class="project-title">'+proj.title+'</div>' +
+          '<div class="project-links">'+links+'</div>' +
+        '</div>' +
+        '<p class="project-desc">'+proj.description+'</p>' +
+        metricHtml +
+        '<div class="project-tags">'+tagsHtml+'</div>';
+
+      wrap.appendChild(card);
+    });
+  }
+
+  /* ------------------------------ experience ------------------------------- */
+  function renderExperience(){
+    const wrap = document.getElementById("timeline");
+    CONFIG.experience.forEach(function(job){
+      const item = el("div","timeline-item");
+      const pointsHtml = job.points.map(function(p){ return "<li>"+p+"</li>"; }).join("");
+      item.innerHTML =
+        '<div class="timeline-duration">'+job.duration+'</div>' +
+        '<div>' +
+          '<div class="timeline-role">'+job.role+'</div>' +
+          '<div class="timeline-company">'+job.company+'</div>' +
+          '<ul class="timeline-points">'+pointsHtml+'</ul>' +
+        '</div>';
+      wrap.appendChild(item);
+    });
+  }
+
+  /* ------------------------------- education -------------------------------- */
+  function renderEducation(){
+    const wrap = document.getElementById("eduGrid");
+    CONFIG.education.forEach(function(ed){
+      const card = el("div","edu-card");
+      const metaParts = [ed.duration, ed.detail].filter(Boolean);
+      card.innerHTML =
+        '<div class="edu-degree">'+ed.degree+'</div>' +
+        '<div class="edu-school">'+ed.school+'</div>' +
+        '<div class="edu-meta">'+metaParts.join(' · ')+'</div>';
+      wrap.appendChild(card);
+    });
+  }
+
+  /* -------------------------------- socials --------------------------------- */
+  function renderSocials(){
+    const wrap = document.getElementById("socialLinks");
+    const s = CONFIG.profile.socials;
+    const map = [
+      { key:"email",    label: CONFIG.profile.email, icon: ICONS.mail },
+      { key:"phone",    label: s.phoneDisplay || s.phone, icon: ICONS.phone },
+      { key:"github",   label:"GitHub",   icon: ICONS.github },
+      { key:"linkedin", label:"LinkedIn", icon: ICONS.linkedin },
+      { key:"kaggle",   label:"Kaggle",   icon: ICONS.kaggle }
+    ];
+    map.forEach(function(m){
+      if(!s[m.key]) return;
+      const a = el("a","social-link", m.icon + "<span>"+m.label+"</span>");
+      a.href = s[m.key];
+      if(m.key !== "email" && m.key !== "phone"){ a.target = "_blank"; a.rel = "noopener"; }
+      wrap.appendChild(a);
+    });
+  }
+
+  /* ---------------------------------- nav ------------------------------------ */
+  function setupNav(){
+    const btn = document.getElementById("hamburgerBtn");
+    const menu = document.getElementById("mobileMenu");
+    btn.addEventListener("click", function(){
+      const open = menu.classList.toggle("open");
+      btn.setAttribute("aria-expanded", open ? "true" : "false");
+    });
+    menu.querySelectorAll("a").forEach(function(a){
+      a.addEventListener("click", function(){ menu.classList.remove("open"); btn.setAttribute("aria-expanded","false"); });
+    });
+  }
+
+  /* ------------------------- scroll-triggered "execution" -------------------- */
+  function setupObservers(){
+    const io = new IntersectionObserver(function(entries){
+      entries.forEach(function(entry){
+        if(entry.isIntersecting){
+          entry.target.classList.add("in-view");
+          io.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.2 });
+
+    document.querySelectorAll(".cell").forEach(function(cell){ io.observe(cell); });
+
+    const chartCard = document.getElementById("chartCard");
+    const chartIO = new IntersectionObserver(function(entries){
+      entries.forEach(function(entry){
+        if(entry.isIntersecting){
+          entry.target.classList.add("in-view");
+          chartIO.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.3 });
+    chartIO.observe(chartCard);
+  }
+
+  function setupYear(){
+    document.getElementById("year").textContent = new Date().getFullYear();
+  }
+
+  document.addEventListener("DOMContentLoaded", function(){
+    renderProfile();
+    renderStats();
+    renderChart();
+    renderSkills();
+    renderProjects();
+    renderExperience();
+    renderEducation();
+    renderSocials();
+    setupNav();
+    setupRoleRotator();
+    setupObservers();
+    setupYear();
+  });
+})();
+</script>
+</body>
+</html>
